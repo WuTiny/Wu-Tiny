@@ -8,6 +8,7 @@ class WjmCrmApplicationTests {
 
     @Test
     void contextLoads() {
+        Systlsakdlsa
     }
 
 }
