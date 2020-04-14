@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wjm.wjmcrm.mapper.CustomerMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="CustomerResult" type="com.wjm.wjmcrm.entity.Customer">
+        <id column="customer_id" property="customerId" />
+        <result column="customer_name" property="customerName" />
+        <result column="sex" property="sex" />
+        <result column="telphone" property="telphone" />
+        <result column="company" property="company" />
+        <result column="address" property="address" />
+        <result column="emp_id" property="empId" />
+        <result column="is_orders" property="isOrders" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="is_del" property="isDel" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        customer_id, customer_name, sex, telphone, company, address, emp_id, is_orders, create_time, update_time, is_del
+    </sql>
+
+</mapper>

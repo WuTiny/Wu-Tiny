@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wjm.wjmcrm.mapper.PermissionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="PermissionResult" type="com.wjm.wjmcrm.entity.Permission">
+        <id column="perm_id" property="permId" />
+        <result column="perm_name" property="permName" />
+        <result column="url" property="url" />
+        <result column="permission" property="permission" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="is_del" property="isDel" />
+        <collection  property="roleList" javaType="java.util.List"  resultMap="RoleResult" />
+    </resultMap>
+    <resultMap id="RoleResult" type="com.wjm.wjmcrm.entity.Role">
+        <id column="role_id" property="roleId" />
+        <result column="role_name" property="roleName" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="is_del" property="isDel" />
+    </resultMap>
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        select distinct p.perm_id,perm_name,permission,url,p.create_time,p.update_time,p.is_del,
+            r.role_id,role_name
+        from permission p
+            LEFT JOIN role_permission rp ON p.perm_id= rp.perm_id
+            left join role r on r.role_id = rp.role_id
+     </sql>
+
+    <select id="selectList" resultMap="PermissionResult">
+        <include refid="Base_Column_List" />
+        where p.is_del =0
+    </select>
+    <select id="selectByName" parameterType="String" resultMap="PermissionResult">
+        <include refid="Base_Column_List" />
+        where perm_name = #{permName} and p.is_del =0
+    </select>
+</mapper>

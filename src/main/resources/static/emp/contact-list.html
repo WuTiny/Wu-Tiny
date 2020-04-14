@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html class="x-admin-sm"  xmlns:th="http://www.thymeleaf.org">
+  
+  <head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.1</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/xadmin.css">
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/static/js/xadmin.js"></script>
+    <script type="text/javascript" src="/static/js/cookie.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">客户跟踪</a>
+        <a>
+          <cite>跟踪列表</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+      <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so">
+          <input type="text" name="contactName"  placeholder="请输入" class="layui-input" autocomplete="off">
+          <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+      </div>
+      <table class="layui-table" id="valueTable" lay-filter="contactManage">
+      </table>
+
+    </div>
+    <script type="text/html" id="toolbar">
+        <xblock>
+
+        <a class="layui-btn layui-btn-mini" lay-event="add"><i class="layui-icon"></i>添加</a>
+
+        </xblock>
+    </script>
+    <script type="text/html" id="barDemo">
+     <!-- <a class="layui-btn layui-btn-mini" lay-event="edit">编辑</a>-->
+      <a class="layui-btn layui-btn-mini layui-btn-danger" lay-event="del">删除</a>
+    </script>
+    <script>
+      layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        
+        //执行一个laydate实例
+        laydate.render({
+          elem: '#start' //指定元素
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+          elem: '#end' //指定元素
+        });
+      });
+
+      // 方法渲染
+      // var customerTable;
+      var form;
+      var table;
+      layui.use('table', function () {
+          // $ = layui.jquery, table = layui.table, form = layui.form;
+          // 很重要,初始化
+          table = layui.table, form = layui.form;
+          table.render({
+              elem: '#valueTable'  //要和table标签ID一致
+              //,height: 'full'
+              , url: '/contact'
+              , id: 'testReload'
+              , toolbar:'#toolbar'
+              , page: true
+               , limit: 10
+              // , offset: 'auto'
+              // , height: 'full-105'
+              ,loading: true
+              ,cols: [[
+                  {type:'numbers',title:'序号',align:'center', width:40} // 自增序号
+                  ,{field: 'contactId', title: '跟踪信息ID', align: 'center', width: 150}
+              , {field: 'customerName', templet:'<div>{{d.customer.customerName}}</div>',title: '客户名', align: 'center', width: 150}
+                  , {field: 'way', title:'联系方式',width: 250, align: 'center'}
+                  , {field: 'content', title: '会话内容', align: 'center', width: 250}
+                  , {field: 'createTime', title: '会话时间', align: 'center', width: 200}
+                  ,{fixed: 'right', width: 150, align: 'center', toolbar: '#barDemo', title: '操作'}
+                  , {field: 'customerId',templet:'<div>{{d.customer.contactId}}</div>', hide:true}
+              ]]
+          });
+
+          table.on('tool(contactManage)', function(obj){
+              var data = obj.data;
+              if(obj.event === 'detail'){
+                  layer.msg('ID：'+ data.id + ' 的查看操作');
+              } else if(obj.event === 'del'){
+                  layer.confirm('确定删除吗', function(index){
+                      $.ajax({
+                          url: "/contact/del/"+data.contactId,
+                          type: "DELETE",
+
+                          success: function(data){
+                              if(data.state==1){
+                                  obj.del();
+                                  layer.close(index);
+                                  layer.msg("删除成功", {icon: 6});
+                              }else{
+                                  layer.msg("删除失败", {icon: 5});
+                              }
+                          }
+
+                      });
+                  });
+              }
+          });
+
+          table.on('toolbar(contactManage)', function(obj){
+              var data = obj.data;
+              if (obj.event === 'add'){
+                  addContact(data)
+              }
+          });
+
+      });
+
+      function addContact(data){
+          var index = layui.layer.open({
+              title : "添加会话",
+              type : 2,
+              content : "contact-add.html",//弹出层页面
+              area: ['400px', '400px'],
+              success : function(layero, index){
+                  var body = layui.layer.getChildFrame('body', index);
+                  if(data){
+
+                      form.render();
+                  }
+                  setTimeout(function(){
+                      layui.layer.tips('点击此处返回用户列表', '.layui-layer-setwin .layui-layer-close', {
+                          tips: 3
+                      });
+                  },500)
+              }
+          })
+
+          $(window).on("resize",function(){
+
+          })
+      }
+
+    </script>
+
+  </body>
+
+</html>

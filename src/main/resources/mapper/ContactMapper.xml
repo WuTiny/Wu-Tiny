@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wjm.wjmcrm.mapper.ContactMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="ContactMap" type="com.wjm.wjmcrm.entity.Contact">
+        <id column="contact_id" property="contactId" />
+        <result column="way" property="way" />
+        <result column="content" property="content" />
+        <result column="customer_id" property="customerId" />
+        <result column="emp_id" property="empId" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="is_del" property="isDel" />
+        <association property="customer" javaType="com.wjm.wjmcrm.entity.Customer" resultMap="CustomerMap"/>
+    </resultMap>
+    <resultMap id="CustomerMap" type="com.wjm.wjmcrm.entity.Customer">
+        <id column="customer_id" property="customerId" />
+        <result column="customer_name" property="customerName" />
+        <result column="sex" property="sex" />
+        <result column="telphone" property="telphone" />
+        <result column="company" property="company" />
+        <result column="address" property="address" />
+        <result column="emp_id" property="empId" />
+        <result column="is_orders" property="isOrders" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="is_del" property="isDel" />
+    </resultMap>
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+       select co.contact_id,way,content,co.customer_id,co.emp_id,co.create_time,co.update_time,co.is_del,
+       cu.customer_id,cu.customer_name
+       from contact co
+       LEFT JOIN customer cu ON cu.customer_id=co.customer_id
+    </sql>
+    <select id="list" resultMap="ContactMap" parameterType="Integer">
+        <include refid="Base_Column_List" />
+        WHERE co.is_del=0 and co.emp_id=#{empId}
+    </select>
+
+</mapper>

@@ -1,0 +1,48 @@
+server:
+  port: 8080
+
+# Spring Boot ������Դ����
+spring:
+  datasource:
+    name: wjm-crm
+    url: jdbc:mysql://localhost:3306/crm_wjm?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    username: root
+    password: root
+    # ʹ��druid����Դ
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    filters: stat
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    maxOpenPreparedStatements: 20
+
+# mybatis-plus�������
+mybatis-plus:
+  # xmlɨ�裬���Ŀ¼�ö��Ż��߷ֺŷָ������� Mapper ����Ӧ�� XML �ļ�λ�ã�
+  mapper-locations: classpath:mapper/*.xml
+  # �������þ���Ĭ��ֵ,���Բ�����
+  global-config:
+    db-config:
+      #�������� AUTO:"���ݿ�ID����" INPUT:"�û�����ID",ID_WORKER:"ȫ��ΨһID (��������ΨһID)", UUID:"ȫ��ΨһID UUID";
+      id-type: auto
+      #�ֶβ��� IGNORED:"�����ж�"  NOT_NULL:"�� NULL �ж�")  NOT_EMPTY:"�ǿ��ж�"
+      field-strategy: NOT_EMPTY
+      #���ݿ�����
+      db-type: MYSQL
+  configuration:
+    # �Ƿ����Զ��շ���������ӳ��:�����ݿ�������Java�����շ�����������ӳ��
+    map-underscore-to-camel-case: true
+    # �����ѯ����а�����ֵ���У��� MyBatis ��ӳ���ʱ�򣬲���ӳ������ֶ�
+    call-setters-on-nulls: true
+    # ������ûὫִ�е�sql��ӡ�������ڿ�������Ե�ʱ�������
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

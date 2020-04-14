@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wjm.wjmcrm.mapper.RoleMapper">
+    <resultMap id="RoleResult" type="com.wjm.wjmcrm.entity.Role">
+        <id column="role_id" jdbcType="INTEGER" property="roleId" />
+        <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="is_del" jdbcType="INTEGER" property="isDel" />
+        <collection  property="permissions" javaType="java.util.List"  resultMap="PermissionResult" />
+        <collection  property="departments" javaType="java.util.List"  resultMap="DepartmentResult" />
+    </resultMap>
+    <!-- 权限映射结果 -->
+    <resultMap id="PermissionResult" type="com.wjm.wjmcrm.entity.Permission">
+        <id column="perm_id" property="permId" />
+        <result column="perm_name" property="permName" />
+        <result column="url" property="url" />
+        <result column="permission" property="permission" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="is_del" property="isDel" />
+    </resultMap>
+    <!-- 部门映射结果 -->
+    <resultMap id="DepartmentResult" type="com.wjm.wjmcrm.entity.Department">
+        <id column="dept_id" property="deptId" />
+        <result column="dept_name" property="deptName" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="is_del" property="isDel" />
+    </resultMap>
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        select distinct r.role_id,role_name,r.create_time,r.update_time,r.is_del,
+        d.dept_id,d.dept_name
+	    from role r
+	        left join dept_role dr on r.role_id = dr.role_id		-- 员工和角色的关系
+			LEFT JOIN department d ON d.dept_id = dr.dept_id
+    </sql>
+    <select id="selectList" resultMap="RoleResult">
+        <include refid="Base_Column_List" />
+        where r.is_del =0
+    </select>
+    <!--<select id="selectByName" parameterType="String" resultMap="RoleResult">
+        <include refid="Base_Column_List" />
+        where role_name = #{roleName} and r.is_del =0
+    </select>-->
+    <!--<select id="selectByDel" resultMap="RoleResultMap" >
+        <include refid="Base_Column_List"/>
+        where r.is_del = 1
+    </select>-->
+</mapper>
